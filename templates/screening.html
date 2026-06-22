@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Silicoscan — AI Screening untuk Skrining Rontgen Dada. Upload foto X-ray untuk analisis otomatis.">
+    <meta name="theme-color" content="#0f172a">
+    <title>{{ app_name }} — AI Screening</title>
+    <link rel="icon" type="image/png" href="/static/img/logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* Screening page: full dark background */
+        body {
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+        select option {
+            background-color: #0f172a;
+            color: #ffffff;
+        }
+        .screening-page {
+            min-height: 100vh;
+            padding-top: 64px;
+        }
+        /* Override navbar for dark page */
+        .navbar--dark {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom-color: var(--dark-border);
+        }
+        .navbar--dark .navbar-brand { color: var(--white); }
+        .navbar--dark .navbar-nav a { color: var(--dark-muted); }
+        .navbar--dark .navbar-nav a:hover,
+        .navbar--dark .navbar-nav a.active { color: var(--white); background: rgba(255,255,255,0.05); }
+        .navbar--dark .lang-select { background: rgba(255,255,255,0.06); border-color: var(--dark-border); }
+        .navbar--dark .lang-select, .navbar--dark .lang-select select { color: var(--dark-muted); }
+        .navbar--dark .nav-toggle { color: var(--white); }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== NAVBAR (Dark) ==================== -->
+    <nav class="navbar navbar--dark" id="navbar">
+        <div class="navbar-inner">
+            <a href="/" class="navbar-brand">
+                <img src="/static/img/logo.png" class="navbar-logo-img" alt="Silicoscan">
+                <span class="navbar-title">{{ app_name }}</span>
+            </a>
+
+            <ul class="navbar-nav" id="navbar-nav">
+                <li><a href="/" data-i18n="nav.home">Beranda</a></li>
+                <li><a href="/screening" class="active" data-i18n="nav.screening">Skrining</a></li>
+            </ul>
+
+            <div class="navbar-right">
+                <div class="lang-select">
+                    <i class="fas fa-globe" style="margin-right: 4px;"></i>
+                    <select id="lang-switcher" onchange="switchLanguage(this.value)">
+                        <option value="id">Indonesia</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <button class="nav-toggle" id="nav-toggle" onclick="toggleMobileNav()">☰</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== SCREENING ==================== -->
+    <div class="screening-page">
+        <section class="screening-section" style="padding-top: 60px;">
+            <div class="container">
+                <div class="screening-header">
+                    <div class="section-tag" data-i18n="screen.tag"><i class="fas fa-microscope" style="margin-right:8px;"></i>AI Screening</div>
+                    <h1 class="section-title" data-i18n="screen.title">Chest X-Ray Analysis</h1>
+                    <p class="section-subtitle" data-i18n="screen.subtitle">
+                        Upload foto rontgen dada untuk analisis otomatis menggunakan tiga model AI
+                    </p>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="disclaimer" data-i18n="screen.disclaimer">
+                    <strong><i class="fas fa-exclamation-triangle" style="color:var(--amber-500); margin-right:4px;"></i> Disclaimer — Alat Bantu Skrining</strong>
+                    Hasil analisis AI ini bersifat sebagai alat bantu skrining awal dan <strong>bukan</strong> pengganti diagnosis medis profesional. 
+                    Selalu konsultasikan hasil dengan dokter atau tenaga medis yang berkompeten.
+                </div>
+
+                <!-- Model Selection -->
+                <div class="model-selection" style="margin-bottom: 20px; text-align: center;">
+                    <label for="model-type" style="color: var(--dark-muted); margin-right: 10px;" data-i18n="screen.select_model">Pilih Model Deteksi:</label>
+                    <select id="model-type" class="form-select" style="padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--dark-border); color: var(--white); outline: none;">
+                        <option value="biasa" data-i18n="screen.model_biasa">Model Alpha</option>
+                        <option value="full" data-i18n="screen.model_full">Model Beta</option>
+                    </select>
+                </div>
+
+                <!-- Upload -->
+                <div class="upload-zone" id="upload-zone">
+                    <div class="upload-icon"><i class="fas fa-cloud-upload-alt"></i></div>
+                    <div class="upload-title" data-i18n="screen.upload_title">Upload Foto Rontgen Dada</div>
+                    <div class="upload-subtitle" data-i18n="screen.upload_sub">Drag & drop file atau klik untuk memilih</div>
+                    <div class="upload-btn-inline" data-i18n="screen.upload_btn"><i class="fas fa-folder-open" style="margin-right:8px;"></i>Pilih File</div>
+                    <div class="upload-formats">PNG, JPG, JPEG, BMP, TIFF • Max 30MB</div>
+                </div>
+                <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.bmp,.tif,.tiff">
+
+                <!-- Preview -->
+                <section class="preview-section" id="preview-section">
+                    <div class="preview-card">
+                        <div class="preview-image-wrap">
+                            <img id="preview-image" src="" alt="Preview X-Ray">
+                        </div>
+                        <div class="preview-info">
+                            <div class="preview-file-info">
+                                <div class="preview-filename" id="preview-filename">filename.jpg</div>
+                                <div class="preview-meta" id="preview-meta">2.5 MB • JPG</div>
+                            </div>
+                            <div class="preview-actions">
+                                <button class="btn-analyze" id="btn-analyze" data-i18n="screen.analyze"><i class="fas fa-microscope" style="margin-right:6px;"></i>Mulai Analisis</button>
+                                <button class="btn-cancel" id="btn-reset" data-i18n="screen.cancel"><i class="fas fa-times"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Processing -->
+                <section class="processing-section" id="processing-section">
+                    <div class="processing-card">
+                        <div class="processing-spinner"></div>
+                        <div class="processing-title" data-i18n="screen.analyzing">Sedang Menganalisis...</div>
+                        <div class="processing-subtitle" id="processing-subtitle" data-i18n="screen.preparing">Mempersiapkan gambar...</div>
+
+                        <div class="steps-tracker">
+                            <div class="step-item">
+                                <div class="step-node">
+                                    <div class="step-circle" id="step-circle-0"><i class="fas fa-lungs"></i></div>
+                                    <div class="step-label" id="step-label-0">Segmentation</div>
+                                </div>
+                            </div>
+                            <div class="step-connector" id="step-connector-0"></div>
+                            <div class="step-item">
+                                <div class="step-node">
+                                    <div class="step-circle" id="step-circle-1"><i class="fas fa-search-plus"></i></div>
+                                    <div class="step-label" id="step-label-1">Detection</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Error -->
+                <div class="error-card" id="error-card">
+                    <div class="error-inner">
+                        <div class="error-icon"><i class="fas fa-times-circle" style="color:var(--danger)"></i></div>
+                        <div class="error-message" id="error-message">Error</div>
+                        <div class="error-detail" data-i18n="screen.error_detail">Silakan coba lagi dengan gambar rontgen yang valid</div>
+                        <button class="btn-new-analysis" onclick="resetState()" data-i18n="screen.retry"><i class="fas fa-redo" style="margin-right:6px;"></i>Coba Lagi</button>
+                    </div>
+                </div>
+
+                <!-- Results (JS-populated) -->
+                <section class="results-section" id="results-section"></section>
+            </div>
+        </section>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
