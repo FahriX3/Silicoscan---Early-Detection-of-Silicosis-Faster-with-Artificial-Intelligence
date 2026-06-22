@@ -19,7 +19,7 @@ if ! command -v python3 &> /dev/null || ! command -v pip3 &> /dev/null; then
     echo "  -> Python3/pip tidak ditemukan. Mencoba menginstal otomatis..."
     if command -v apt-get &> /dev/null; then
         sudo apt-get update
-        sudo apt-get install python3 python3-venv python3-pip libgl1-mesa-glx libglib2.0-0 -y
+        sudo apt-get install python3 python3-venv python3-pip libgl1 libglib2.0-0 -y
     elif command -v yum &> /dev/null; then
         sudo yum install python3 python3-pip mesa-libGL -y
     elif command -v brew &> /dev/null; then
@@ -33,7 +33,7 @@ else
     echo "  -> Python3 sudah terinstall."
     # Coba install libgl1 khusus untuk ubuntu jika apt tersedia (supaya OpenCV tidak error)
     if command -v apt-get &> /dev/null; then
-        sudo apt-get install libgl1-mesa-glx libglib2.0-0 -y > /dev/null 2>&1 || true
+        sudo apt-get install libgl1 libglib2.0-0 -y > /dev/null 2>&1 || true
     fi
 fi
 
