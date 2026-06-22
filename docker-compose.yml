@@ -16,10 +16,6 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Mount model weights dari parent directory
-      - ../AI Masking/best_model.pth:/app/models/unet_masking.pth:ro
-      - ../Model Klasifikasi/exp/best_swin_model.pth:/app/models/swin_classifier.pth:ro
-      - ../Model Deteksi/train_run2_small_640/weights/best.pt:/app/models/yolo_detector.pt:ro
       # Persist results
       - ./results:/app/results
     environment:
