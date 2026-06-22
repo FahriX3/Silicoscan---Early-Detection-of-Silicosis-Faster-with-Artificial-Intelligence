@@ -37,39 +37,41 @@ Model-model AI pada aplikasi ini telah melalui proses *training* dan validasi pa
 
 Aplikasi ini sudah dioptimalkan agar sepenuhnya **mandiri (standalone)**. Seluruh model dan *dependencies* sudah dirancang agar dapat langsung dijalankan di sistem operasi standar tanpa perlu pengaturan Python PyTorch yang berat.
 
-### Prasyarat Umum
-- Python 3.10 atau lebih baru terpasang di sistem.
-
 ### 🪟 Windows
 
-Cukup jalankan dua file batch berikut:
-1. **Setup Awal** (Hanya 1x saat pertama kali instal):
-   ```cmd
-   install_windows.bat
-   ```
-2. **Menjalankan Server**:
-   ```cmd
-   run.bat
-   ```
+Seluruh proses pembuatan *Virtual Environment* dan pengunduhan *library* akan dilakukan secara otomatis.
+**Prasyarat**: Pastikan [Python 3.10+](https://www.python.org/downloads/) sudah terinstall (Centang "Add Python to PATH" saat instalasi).
 
-### 🍏 Linux / macOS
+1. Buka folder `Web Interface` di File Explorer.
+2. Klik ganda pada file `install_windows.bat` (Hanya perlu dilakukan 1x di awal).
+3. Untuk menjalankan aplikasi, klik ganda pada `run.bat`.
 
-1. **Setup Awal** (Hanya 1x):
+### 🍏 Linux / macOS (Otomatis Penuh)
+
+Script instalasi Linux/macOS sudah dilengkapi sistem pendeteksi OS. Jika Python atau *library* grafis OS belum ada, script akan **otomatis mengunduhkannya** via `apt-get` (Ubuntu/Debian), `yum` (CentOS/RHEL), atau `brew` (Mac).
+
+Buka Terminal di dalam folder `Web Interface` lalu jalankan:
+1. **Beri izin eksekusi**:
    ```bash
    chmod +x install_linux.sh run.sh
+   ```
+2. **Jalankan Installer** (Mungkin akan meminta password `sudo` untuk install dependencies OS):
+   ```bash
    ./install_linux.sh
    ```
-2. **Menjalankan Server**:
+3. **Menjalankan Server**:
    ```bash
    ./run.sh
    ```
 
-### 🐳 Menggunakan Docker (Rekomendasi untuk Server)
+### 🐳 Menggunakan Docker (Rekomendasi Terbaik)
+
+Jika tidak mau pusing memikirkan Python versi berapa dan OS apa, gunakan Docker. Folder `Web Interface` ini sudah **100% Standalone**, tidak membutuhkan folder lain di luarnya.
 
 ```bash
-docker-compose up --build -d
+docker-compose up -d
 ```
-Aplikasi akan langsung berjalan di *background*. Cocok untuk langsung dipasang pada VPS Linux.
+Aplikasi akan langsung berjalan secara *containerized* di *background*. Cocok untuk rilis produksi di server VPS.
 
 ---
 
