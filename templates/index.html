@@ -29,20 +29,34 @@
                 <li><a href="/screening" data-i18n="nav.screening">Skrining</a></li>
                 <li><a href="#team" data-i18n="nav.team">Tim</a></li>
                 <li><a href="#contact" data-i18n="nav.contact">Kontak</a></li>
+                <!-- Mobile-only language selector -->
+                <li class="mobile-lang-select" id="mobile-lang-item">
+                    <i class="fas fa-globe"></i>
+                    <select id="mobile-lang-switcher" onchange="switchLanguage(this.value); syncLangSwitchers(this.value);">
+                        <option value="id">Indonesia</option>
+                        <option value="en">English</option>
+                    </select>
+                </li>
             </ul>
 
             <div class="navbar-right">
                 <div class="lang-select">
                     <i class="fas fa-globe" style="margin-right:4px;"></i>
-                    <select id="lang-switcher" onchange="switchLanguage(this.value)">
+                    <select id="lang-switcher" onchange="switchLanguage(this.value); syncLangSwitchers(this.value);">
                         <option value="id">Indonesia</option>
                         <option value="en">English</option>
                     </select>
                 </div>
-                <button class="nav-toggle" id="nav-toggle" onclick="toggleMobileNav()">☰</button>
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" onclick="toggleMobileNav()">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
             </div>
         </div>
     </nav>
+    <!-- Mobile overlay (click to close menu) -->
+    <div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileNav()"></div>
 
     <!-- ==================== HERO ==================== -->
     <section class="hero" id="home">
@@ -412,8 +426,51 @@
 
         function toggleMobileNav() {
             const nav = document.getElementById('navbar-nav');
-            nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+            const toggle = document.getElementById('nav-toggle');
+            const overlay = document.getElementById('mobile-overlay');
+            const isOpen = nav.classList.contains('mobile-open');
+
+            if (isOpen) {
+                closeMobileNav();
+            } else {
+                nav.classList.add('mobile-open');
+                toggle.classList.add('active');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
+
+        function closeMobileNav() {
+            const nav = document.getElementById('navbar-nav');
+            const toggle = document.getElementById('nav-toggle');
+            const overlay = document.getElementById('mobile-overlay');
+            nav.classList.remove('mobile-open');
+            toggle.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close mobile menu when a nav link is clicked
+        document.querySelectorAll('#navbar-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    closeMobileNav();
+                }
+            });
+        });
+
+        // Sync language switchers (desktop ↔ mobile)
+        function syncLangSwitchers(val) {
+            document.getElementById('lang-switcher').value = val;
+            document.getElementById('mobile-lang-switcher').value = val;
+        }
+
+        // Close mobile menu on window resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                closeMobileNav();
+            }
+        });
 
         // Scroll-aware nav highlight
         const sections = document.querySelectorAll('section[id]');

@@ -216,8 +216,53 @@ function switchLanguage(lang) {
 
 function toggleMobileNav() {
     const nav = document.getElementById('navbar-nav');
-    nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+    const toggle = document.getElementById('nav-toggle');
+    const overlay = document.getElementById('mobile-overlay');
+    const isOpen = nav.classList.contains('mobile-open');
+
+    if (isOpen) {
+        closeMobileNav();
+    } else {
+        nav.classList.add('mobile-open');
+        toggle.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
 }
+
+function closeMobileNav() {
+    const nav = document.getElementById('navbar-nav');
+    const toggle = document.getElementById('nav-toggle');
+    const overlay = document.getElementById('mobile-overlay');
+    nav.classList.remove('mobile-open');
+    toggle.classList.remove('active');
+    if (overlay) overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Close mobile menu when a nav link is clicked
+document.querySelectorAll('#navbar-nav a').forEach(link => {
+    link.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            closeMobileNav();
+        }
+    });
+});
+
+// Sync language switchers (desktop ↔ mobile)
+function syncLangSwitchers(val) {
+    const desktop = document.getElementById('lang-switcher');
+    const mobile = document.getElementById('mobile-lang-switcher');
+    if (desktop) desktop.value = val;
+    if (mobile) mobile.value = val;
+}
+
+// Close mobile menu on window resize to desktop
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+        closeMobileNav();
+    }
+});
 
 // ==================== STATE ====================
 let selectedFile = null;

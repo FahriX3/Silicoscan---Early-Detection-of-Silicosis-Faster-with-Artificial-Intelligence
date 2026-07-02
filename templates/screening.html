@@ -34,7 +34,32 @@
         .navbar--dark .navbar-nav a.active { color: var(--white); background: rgba(255,255,255,0.05); }
         .navbar--dark .lang-select { background: rgba(255,255,255,0.06); border-color: var(--dark-border); }
         .navbar--dark .lang-select, .navbar--dark .lang-select select { color: var(--dark-muted); }
-        .navbar--dark .nav-toggle { color: var(--white); }
+        .navbar--dark .nav-toggle .bar { background: var(--white); }
+
+        /* Dark mobile menu for screening page */
+        @media (max-width: 768px) {
+            .navbar--dark .navbar-nav {
+                background: rgba(15, 23, 42, 0.98);
+                border-bottom-color: var(--dark-border);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            }
+            .navbar--dark .navbar-nav a {
+                color: var(--dark-muted);
+            }
+            .navbar--dark .navbar-nav a:hover,
+            .navbar--dark .navbar-nav a.active {
+                color: var(--white);
+                background: rgba(255, 255, 255, 0.05);
+            }
+            .navbar--dark .mobile-lang-select {
+                background: rgba(255, 255, 255, 0.04);
+                border-color: var(--dark-border);
+                color: var(--dark-muted);
+            }
+            .navbar--dark .mobile-lang-select select {
+                color: var(--dark-muted);
+            }
+        }
     </style>
 </head>
 <body>
@@ -50,20 +75,34 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li><a href="/" data-i18n="nav.home">Beranda</a></li>
                 <li><a href="/screening" class="active" data-i18n="nav.screening">Skrining</a></li>
+                <!-- Mobile-only language selector -->
+                <li class="mobile-lang-select" id="mobile-lang-item">
+                    <i class="fas fa-globe"></i>
+                    <select id="mobile-lang-switcher" onchange="switchLanguage(this.value); syncLangSwitchers(this.value);">
+                        <option value="id">Indonesia</option>
+                        <option value="en">English</option>
+                    </select>
+                </li>
             </ul>
 
             <div class="navbar-right">
                 <div class="lang-select">
                     <i class="fas fa-globe" style="margin-right: 4px;"></i>
-                    <select id="lang-switcher" onchange="switchLanguage(this.value)">
+                    <select id="lang-switcher" onchange="switchLanguage(this.value); syncLangSwitchers(this.value);">
                         <option value="id">Indonesia</option>
                         <option value="en">English</option>
                     </select>
                 </div>
-                <button class="nav-toggle" id="nav-toggle" onclick="toggleMobileNav()">☰</button>
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" onclick="toggleMobileNav()">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </button>
             </div>
         </div>
     </nav>
+    <!-- Mobile overlay (click to close menu) -->
+    <div class="mobile-overlay" id="mobile-overlay" onclick="closeMobileNav()"></div>
 
     <!-- ==================== SCREENING ==================== -->
     <div class="screening-page">
